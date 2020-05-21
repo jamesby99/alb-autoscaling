@@ -36,6 +36,7 @@ resource "aws_autoscaling_policy" "web_tracking_policy" {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
       #predefined_metric_type = "ALBRequestCountPerTarget"
+      #resource_label =""
     }
     target_value = "10" #CPU 10%
     #target_value = "1" #Request 1
