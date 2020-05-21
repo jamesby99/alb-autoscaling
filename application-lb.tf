@@ -39,7 +39,7 @@ resource "aws_alb_target_group" "targets" {
     }
 }
 
-
+# autoscaling이 아닌 instance 대상일 경우
 # resource "aws_alb_target_group_attachment" "attach-targets" {
 #     # count = var.WEB_SERVER_COUNT
 #     target_group_arn = aws_alb_target_group.targets.arn

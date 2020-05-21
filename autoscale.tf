@@ -4,7 +4,6 @@ resource "aws_launch_configuration" "user11-launchconfig" {
   instance_type        = "t2.micro"
   key_name             = aws_key_pair.public_key.key_name
   security_groups      = [aws_security_group.allow-http.id, aws_security_group.allow-ssh.id]
-  #user_data            = "#!/bin/bash\napt-get update\napt-get -y install nginx\nMYIP=`ifconfig | grep 'addr:10' | awk '{ print $2 }' | cut -d ':' -f2`\necho 'this is: '$MYIP > /usr/share/nginx/html/index.html"
   lifecycle              { create_before_destroy = true }
 }
 
@@ -15,8 +14,8 @@ resource "aws_autoscaling_group" "webserver-autoscaling" {
   min_size             = var.AUTO_SCALE_MIN_SIZE
   max_size             = var.AUTO_SCALE_MAX_SIZE
   health_check_grace_period = 300
-  health_check_type = "EC2"
-  #health_check_type = "ELB" 
+  #health_check_type = "EC2" # ASGAverageCPUUtilization
+  health_check_type = "ELB"  # ALBRequestCountPerTarget
   force_delete = true
 
   tag {
@@ -34,12 +33,12 @@ resource "aws_autoscaling_policy" "web_tracking_policy" {
 
   target_tracking_configuration {
     predefined_metric_specification {
-      predefined_metric_type = "ASGAverageCPUUtilization"
-      #predefined_metric_type = "ALBRequestCountPerTarget"
-      #resource_label =""
+      #predefined_metric_type = "ASGAverageCPUUtilization"
+      predefined_metric_type = "ALBRequestCountPerTarget"
+      resource_label = "${aws_alb.user11-alb.arn_suffix}/${aws_alb_target_group.targets.arn_suffix}"
     }
-    target_value = "10" #CPU 10%
-    #target_value = "1" #Request 1
+    #target_value = "10" #ASGAverageCPUUtilization CPU 10%
+    target_value = "1" #ALBRequestCountPerTarget Request 1
   }
 }
 
