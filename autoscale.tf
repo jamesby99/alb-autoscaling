@@ -36,6 +36,7 @@ resource "aws_autoscaling_policy" "web_tracking_policy" {
       #predefined_metric_type = "ASGAverageCPUUtilization"
       predefined_metric_type = "ALBRequestCountPerTarget"
       resource_label = "${aws_alb.user11-alb.arn_suffix}/${aws_alb_target_group.targets.arn_suffix}"
+      #issue solved: https://github.com/terraform-providers/terraform-provider-aws/issues/9734
     }
     #target_value = "10" #ASGAverageCPUUtilization CPU 10%
     target_value = "1" #ALBRequestCountPerTarget Request 1
